@@ -1,0 +1,55 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id 'fabric-loom' version '1.9-SNAPSHOT'
+    id "org.jetbrains.kotlin.jvm" version "2.1.0"
+}
+
+version = project.mod_version
+group = project.maven_group
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
+}
+
+processResources {
+    filteringCharset = "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand([
+                "version": project.version,
+                "loader_version": project.property("loader_version"),
+                "minecraft_version": project.property("minecraft_version"),
+                "fabric_kotlin_version": project.property("fabric_kotlin_version")
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = 21
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = 21
+    }
+}
+
+java {
+    withSourcesJar() // If you remove this line, sources will not be generated.
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+
+}
